@@ -1,8 +1,9 @@
 # konakart-ecommerce
-Docker implementation of Java-based ecommerce platform KonaKart with NGINX reverse proxy in AWS
+Follow the steps below to deploy Java-based ecommerce platform KonaKart with NGINX reverse proxy using Docker in AWS.
+
+# Architecture
 
 ![konakart_arch](https://github.com/carlyn-aarish/konakart-ecommerce/assets/87711685/7d30185c-b278-4427-bcf2-6820c8ded473)
-
 
 # Resources
 https://www.konakart.com/downloads/community_edition/
@@ -18,13 +19,10 @@ Security Group Inbound Rules for NGINX VM:
 * Allow traffic on ports 22, 80 from your local IP address
 
 # Steps
-1. Update packages (both VMs)
-   ```
-   sudo dnf update
-   ```
 
-2. Install Docker (both VMs)
+## 1. Install Docker (both VMs)
    ```
+   sudo dnf update  # update packages
    sudo dnf install -y docker  # install Docker
    sudo systemctl start docker  # start Docker
    sudo systemctl enable docker  # enable Docker to automatically restart upon reboot
@@ -32,19 +30,19 @@ Security Group Inbound Rules for NGINX VM:
    sudo docker run hello-world  # test running hello-world container
    ```
    
-3. Set up non-root user for Konakart installation (Konakart VM)
+## 2. Install Konakart (Konakart VM)
+   Set up non-root user for Konakart installation.
    ```
    sudo adduser [username]
    sudo passwd [username]
    sudo usermod -aG docker konakartuser  # add user to docker group for use without sudo
    sudo usermod -aG wheel konakartuser  # grant sudo privileges to user
    su [username]  # switch to non-root user
-   
-4. Pull and run Konakart (Konakart VM)
+   ```
+   Pull and run Docker container running Konakart. This Docker image contains the KonaKart demo store (Community Edition) with a pre-populated PostgreSQL database.
    ```
    docker run -d --name kk9600 -p 8780:8780 -p 8783:8783 konakart/konakart_9600_ce  # pull and run community version of KonaKart from DockerHub
    ```
-   This Docker image contains the KonaKart demo store (Community Edition) with a pre-populated PostgreSQL database.
    After running the `docker run` command open a browser and see the storefront at:
 
    ```
@@ -54,9 +52,9 @@ Security Group Inbound Rules for NGINX VM:
    ```
    http://[konakart-ec2-instance-public-ip-address]/konakartadmin/
    ```
-   Login using “admin@konakart.com” as the username and “princess” as the password.
+   Log in using `admin@konakart.com` as the username and “princess” as the password.
 
-5. Configure NGINX as a reverse proxy (NGINX VM)
+## 3. Configure NGINX as a reverse proxy (NGINX VM)
    ```
    docker run -d --name nginx-base -p 80:80 nginx:latest  #  Run nginx docker container based on NGINX base image
    mkdir nginx  # make subdirectory for NGINX
@@ -65,7 +63,7 @@ Security Group Inbound Rules for NGINX VM:
    vim nginx/conf/default.conf  # edit the default.conf file to map NGINX to Konakart
    ```
 
-   After root location entry, add a new location entry to pass traffic to Konakart VM.
+   After root location entry in `default.conf`, add a new location entry to pass traffic to Konakart VM.
    ```
       location /konakart {
         proxy_pass http://[konakart-ec2-instance-public-ip-address]:8780/konakart;
@@ -99,3 +97,5 @@ Security Group Inbound Rules for NGINX VM:
    ```
 
    To test access, go to `http://[nginx-ec2-instance-public-ip-address]/konakart` and you should see Konakart app.
+
+   ![konakart_screenshot](https://github.com/carlyn-aarish/konakart-ecommerce/assets/87711685/0a193546-a9aa-459b-ac58-8d4877b6fe2c)
