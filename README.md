@@ -70,7 +70,7 @@ Security Group Inbound Rules for NGINX VM:
         proxy_pass http://[konakart-ec2-instance-public-ip-address]:8780/konakart;
     }
    ```
-   The above configuration will pass traffic from http://[nginx-ec2-instance-public-ip-address]/konakart >> http://[konakart-ec2-instance-public-ip-address]:8780/konakart
+   The above configuration will pass traffic from `http://[nginx-ec2-instance-public-ip-address]/konakart` >> `http://[konakart-ec2-instance-public-ip-address]:8780/konakart`
 
    Create custom NGINX image based on above configuration.
 
@@ -85,9 +85,15 @@ Security Group Inbound Rules for NGINX VM:
    COPY conf/default.conf /etc/nginx/conf.d/default.conf
    ```
 
+   Kill default NGINX container.
+   ```
+   docker ps  # find container ID for nginx container
+   docker kill [nginx container ID]  # kill container
+   ```
+   
    Build image and run container.
    ```
-   docker build -t nginx-konakart .  # build customer image based on Dockerfile and tag it as "nginx-konakart"
+   docker build -t nginx-konakart .  # build custom image based on Dockerfile and tag it as "nginx-konakart"
    docker run –name nginx -p 80:80 -d nginx-konakart  # Run container based off our custom image
    ```
 
