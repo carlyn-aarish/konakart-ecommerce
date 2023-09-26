@@ -49,26 +49,49 @@ Security Group Inbound Rules for NGINX VM:
    After running the `docker run` command open a browser and see the storefront at:
 
    ```
-   http://[ec2-instance-public-ip-address]:8780/konakart/
+   http://[konakart-ec2-instance-public-ip-address]:8780/konakart/
    ```
    Open admin access at:
    ```
-   http://[ec2-instance-public-ip-address]/konakartadmin/
+   http://[konakart-ec2-instance-public-ip-address]/konakartadmin/
    ```
    Login using “admin@konakart.com” as the username and “princess” as the password.
 
 5. Configure NGINX reverse proxy (NGINX VM)
    ```
    docker run -d --name nginx-base -p 80:80 nginx:latest  #  Run nginx docker container based on NGINX base image
-   mkdir nginx  # make directory for NGINX config
-   docker cp nginx-base:/etc/nginx/conf.d/default.conf ~/nginx/default.conf  # copy the default.conf file so we can modify it to configure NGINX as a reverse proxy
-   vim nginx/default.conf  # edit the default.conf file to map NGINX to Konakart
-   docker cp ~/nginx/default.conf nginx-base:/etc/nginx/conf.d/  # copy conf.d file into NGINX container
-   docker exec nginx-base nginx -t  # Validate file was copied to nginx-base container
-   docker exec nginx-base nginx -s reload  # Reload file into nginx-base container so it has the latest updates
-   
-   
-   
-   
    ```
-   
+   mkdir nginx  # make directory for NGINX
+   mkdir nginx/conf  # make subdirectory for NGINX config
+   docker cp nginx-base:/etc/nginx/conf.d/default.conf ~/nginx/conf/default.conf  # copy the default.conf file so we can modify it to configure NGINX as a reverse proxy
+   vim nginx/conf/default.conf  # edit the default.conf file to map NGINX to Konakart
+   ```
+
+   After root location entry, add a new location entry to pass traffic to Konakart VM.
+   ```
+      location /konakart {
+        proxy_pass http://[konakart-ec2-instance-public-ip-address]:8780/konakart;
+    }
+   ```
+   The above configuration will pass traffic from http://[nginx-ec2-instance-public-ip-address]/konakart >> http://[konakart-ec2-instance-public-ip-address]:8780/konakart
+
+   Create custom NGINX image based on above configuration.
+
+   ```
+   cd nginx  # change to nginx subdirectory
+   touch Dockerfile  # create new file called Dockerfile
+   ```
+
+   Edit contents of Dockerfile:
+   ```
+   FROM nginx:latest 
+   COPY conf/default.conf /etc/nginx/conf.d/default.conf
+   ```
+
+   Build image and run container.
+   ```
+   docker build -t nginx-konakart .  # build customer image based on Dockerfile and tag it as "nginx-konakart"
+   docker run –name nginx -p 80:80 -d nginx-konakart  # Run container based off our custom image
+   ```
+
+   To test access, go to `http://[nginx-ec2-instance-public-ip-address]/konakart` and you should see Konakart app.
