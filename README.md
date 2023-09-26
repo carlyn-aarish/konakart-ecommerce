@@ -58,7 +58,6 @@ Security Group Inbound Rules for NGINX VM:
 5. Configure NGINX as a reverse proxy (NGINX VM)
    ```
    docker run -d --name nginx-base -p 80:80 nginx:latest  #  Run nginx docker container based on NGINX base image
-   ```
    mkdir nginx  # make directory for NGINX
    mkdir nginx/conf  # make subdirectory for NGINX config
    docker cp nginx-base:/etc/nginx/conf.d/default.conf ~/nginx/conf/default.conf  # copy the default.conf file so we can modify it to configure NGINX as a reverse proxy
