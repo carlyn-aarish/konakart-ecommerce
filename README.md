@@ -22,8 +22,6 @@ Security Group Inbound Rules for NGINX VM:
    sudo dnf update
    ```
 
-    *dnf is successor to YUM
-
 2. Install Docker (both VMs)
    ```
    sudo dnf install -y docker  # install Docker
