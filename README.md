@@ -55,7 +55,7 @@ Security Group Inbound Rules for NGINX VM:
    ```
    Login using “admin@konakart.com” as the username and “princess” as the password.
 
-5. Configure NGINX reverse proxy (NGINX VM)
+5. Configure NGINX as a reverse proxy (NGINX VM)
    ```
    docker run -d --name nginx-base -p 80:80 nginx:latest  #  Run nginx docker container based on NGINX base image
    ```
