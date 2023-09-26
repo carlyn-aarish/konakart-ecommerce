@@ -1,7 +1,8 @@
 # konakart-ecommerce
 Docker implementation of Java-based ecommerce platform KonaKart with NGINX reverse proxy in AWS
 
-[insert arch diagram]
+![konakart_arch](https://github.com/carlyn-aarish/konakart-ecommerce/assets/87711685/7d30185c-b278-4427-bcf2-6820c8ded473)
+
 
 # Resources
 https://www.konakart.com/downloads/community_edition/
