@@ -3,7 +3,7 @@ Follow the steps below to deploy Java-based ecommerce platform KonaKart with NGI
 
 # Architecture
 
-![konakart_arch](https://github.com/carlyn-aarish/konakart-ecommerce/konakart_arch.png)
+![konakart_arch](konakart_arch.png)
 
 # Resources
 https://www.konakart.com/downloads/community_edition/
@@ -98,4 +98,4 @@ Security Group Inbound Rules for NGINX VM:
 
    To test access, go to `http://[nginx-ec2-instance-public-ip-address]/konakart` and you should see Konakart app.
 
-   ![konakart_screenshot](https://github.com/carlyn-aarish/konakart-ecommerce/konakart_screenshot.png)
+   ![konakart_screenshot](konakart_screenshot.png)
